@@ -54,14 +54,26 @@ const findUsersByNameAndJob = (name, job) => {
 };
 
 app.get("/users", (req, res) => {
-    const name = req.query.name; // Extract 'name' from query params
-    const job = req.query.job;   // Extract 'job' from query params
+    const name = req.query.name;
+    const job = req.query.job;
 
     let result = findUsersByNameAndJob(name, job);
     if (result.length === 0) {
         res.status(404).send("Resource not Found.");
     } else {
-        res.send(result); // Send the filtered result
+        res.send(result);
+    }
+});
+
+app.delete('/users/:id', (req, res) => {
+    const id = req.params["id"]; //or req.params.id
+    let result = findUserById(id);
+
+    if (result !== undefined) {
+        users.splice(result, 1);
+        res.status(200).json({ message: 'User deleted successfully!' });
+    } else {
+        res.status(404).json({ message: 'User not found' });
     }
 });
 
@@ -79,19 +91,6 @@ app.get("/users/:id", (req, res) => {
 });
 
 
-
-app.delete('/users/:id', (req, res) => {
-    const id = req.params["id"]; //or req.params.id
-    let result = findUserById(id);
-
-    if (result !== undefined) {
-        users.splice(result, 1);
-        res.status(200).json({ message: 'User deleted successfully!' });
-    } else {
-        // User not found
-        res.status(404).json({ message: 'User not found' });
-    }
-});
 
 const addUser = (user) => {
     users["users_list"].push(user);
