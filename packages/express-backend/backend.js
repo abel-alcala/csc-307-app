@@ -101,8 +101,11 @@ const addUser = (user) => {
     return user;
 };
 
-app.post("/users", (req, res) => {
-    const userToAdd = req.body;
-    addUser(userToAdd);
-    res.send();
+
+app.post('/users', (req, res) => {
+    const user = req.body;
+    users.push(user);
+
+    return res.status(201).json(user);
 });
+

@@ -22,16 +22,30 @@ function MyApp() {
         setCharacters(updated);
     }
     function postUser(person) {
-        const promise = fetch("Http://localhost:8000/users", {
+        const promise = fetch("http://localhost:8000/users", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(person),
-        });
+        })
+            .then((res) => {
+                if (res.status === 201) {
+                    return res.json();
+                } else {
+                    throw new Error("Failed to add user.");
+                }
+            })
+            .then((data) => {
+                console.log("User added:", data);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
 
         return promise;
     }
+
     function updateList(person) {
         postUser(person)
             .then(() => setCharacters([...characters, person]))
