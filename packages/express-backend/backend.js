@@ -37,11 +37,14 @@ const users = {
 };
 
 function generateRandomId() {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
+    const characters = 'abcdefghijklmnopqrstuvwxyz';
+    const numbers = '1234567890'
     let Id = '';
-    const length = 6;
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < 3; i++) {
         Id += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    for (let i = 0; i < 3; i++) {
+        Id += numbers.charAt(Math.floor(Math.random() * numbers.length));
     }
     return Id;
 }
@@ -74,7 +77,7 @@ app.get("/users", (req, res) => {
     const job = req.query.job;
 
     let result = findUsersByNameAndJob(name, job);
-    result = { users_list: result }; // Wrap in object for consistency
+    result = { users_list: result };
     if (result.users_list.length === 0) {
         res.status(404).send("Resource not found.");
     } else {
