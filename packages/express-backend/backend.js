@@ -6,7 +6,6 @@ const port = 8000;
 app.use(cors());
 app.use(express.json());
 
-
 const users = {
     users_list: [
         {
@@ -27,7 +26,7 @@ const users = {
         {
             id: "yat999",
             name: "Dee",
-            job: "Aspring actress"
+            job: "Aspiring actress"
         },
         {
             id: "zap555",
@@ -37,16 +36,15 @@ const users = {
     ]
 };
 
-
-app.get("/", (req, res) => {
-    res.send("Hello World!");
-});
-
-app.listen(port, () => {
-    console.log(
-        `Example app listening at http://localhost:${port}`
-    );
-});
+function generateRandomId() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
+    let Id = '';
+    const length = 6;
+    for (let i = 0; i < length; i++) {
+        Id += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return Id;
+}
 
 const findUsersByNameAndJob = (name, job) => {
     return users["users_list"].filter((user) => {
@@ -57,35 +55,35 @@ const findUsersByNameAndJob = (name, job) => {
     });
 };
 
+const findUserById = (id) =>
+    users["users_list"].find((user) => user["id"] === id);
+
+const addUser = (user) => {
+    const generated_id = generateRandomId();
+    const userWithId = { ...user, id: generated_id };
+    users["users_list"].push(userWithId);
+    return userWithId;
+};
+
+app.get("/", (req, res) => {
+    res.send("Hello World!");
+});
+
 app.get("/users", (req, res) => {
     const name = req.query.name;
     const job = req.query.job;
 
     let result = findUsersByNameAndJob(name, job);
-    if (result.length === 0) {
-        res.status(404).send("Resource not Found.");
+    result = { users_list: result }; // Wrap in object for consistency
+    if (result.users_list.length === 0) {
+        res.status(404).send("Resource not found.");
     } else {
         res.send(result);
     }
 });
 
-app.delete('/users/:id', (req, res) => {
-    const id = req.params["id"]; //or req.params.id
-    let result = findUserById(id);
-
-    if (result !== undefined) {
-        users.splice(result, 1);
-        res.status(200).json({ message: 'User deleted successfully!' });
-    } else {
-        res.status(404).json({ message: 'User not found' });
-    }
-});
-
-const findUserById = (id) =>
-    users["users_list"].find((user) => user["id"] === id);
-
 app.get("/users/:id", (req, res) => {
-    const id = req.params.id; //or req.params.id
+    const id = req.params.id;
     let result = findUserById(id);
     if (result === undefined) {
         res.status(404).send("Resource not found.");
@@ -94,18 +92,25 @@ app.get("/users/:id", (req, res) => {
     }
 });
 
+app.delete('/users/:id', (req, res) => {
+    const id = req.params["id"];
+    const userToDelete = findUserById(id);
 
-
-const addUser = (user) => {
-    users["users_list"].push(user);
-    return user;
-};
-
-
-app.post('/users', (req, res) => {
-    const user = req.body;
-    users.push(user);
-
-    return res.status(201).json(user);
+    if (userToDelete !== undefined) {
+        const index = users["users_list"].indexOf(userToDelete);
+        users["users_list"].splice(index, 1);
+        res.status(204).send("Resource null");
+    } else {
+        res.status(404).send(userToDelete);
+    }
 });
 
+app.post('/users', (req, res) => {
+    const add = req.body;
+    const user = addUser(add);
+    res.status(201).send(user);
+});
+
+app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`);
+});

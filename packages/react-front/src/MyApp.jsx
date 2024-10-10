@@ -1,28 +1,53 @@
-import React, {useState, useEffect} from 'react';
-import Table from './Table';
+import React, { useState, useEffect } from "react";
+import Table from "./Table";
 import Form from "./Form";
 
 function MyApp() {
     const [characters, setCharacters] = useState([]);
+
     useEffect(() => {
         fetchUsers()
             .then((res) => res.json())
             .then((json) => setCharacters(json["users_list"]))
-            .catch((error) => { console.log(error); });
-    }, [] );
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+
+    function removeOneCharacter(index) {
+        const url = `http://localhost:8000/users/${characters[index].id}`;
+        fetch(url, {
+            method: "DELETE",
+        })
+            .then((res) => {
+                if (res.status === 204) {
+                    const updated = characters.filter((character, i) => {
+                        return i !== index;
+                    });
+                    setCharacters(updated);
+                } else {
+                    throw new Error("Failed to delete user.");
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
+    function updateList(person) {
+        postUser(person)
+            .then((newUser) => setCharacters([...characters, newUser])) // Correctly update the state with the new user
+            .catch((error) => {
+                console.log(error);
+            });
+    }
 
     function fetchUsers() {
-        const promise = fetch("http://localhost:8000/users");
-        return promise;
+        return fetch("http://localhost:8000/users");
     }
-    function removeOneCharacter(index) {
-        const updated = characters.filter((character, i) => {
-            return i !== index;
-        });
-        setCharacters(updated);
-    }
+
     function postUser(person) {
-        const promise = fetch("http://localhost:8000/users", {
+        return fetch("http://localhost:8000/users", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -35,24 +60,9 @@ function MyApp() {
                 } else {
                     throw new Error("Failed to add user.");
                 }
-            })
-            .then((data) => {
-                console.log("User added:", data);
-            })
-            .catch((error) => {
-                console.error(error);
             });
-
-        return promise;
     }
 
-    function updateList(person) {
-        postUser(person)
-            .then(() => setCharacters([...characters, person]))
-            .catch((error) => {
-                console.log(error);
-            })
-    }
     return (
         <div className="container">
             <Table
@@ -63,4 +73,5 @@ function MyApp() {
         </div>
     );
 }
+
 export default MyApp;

@@ -1,9 +1,10 @@
 import React from "react";
 
-function TableHeader(){
-    return(
+function TableHeader() {
+    return (
         <thead>
         <tr>
+            <th>Id</th>
             <th>Name</th>
             <th>Job</th>
             <th>Remove</th>
@@ -13,28 +14,32 @@ function TableHeader(){
 }
 
 function TableBody(props) {
-    const characterData = props.characterData || []; // Default to empty array
-    const rows = characterData.map((row, index) => {
-        return (
-            <tr key={index}>
-                <td>{row.name}</td>
-                <td>{row.job}</td>
-                <td>
-                    <button onClick={() => props.removeCharacter(index)}>
-                        Delete
-                    </button>
-                </td>
-            </tr>
-        );
-    });
-    return <tbody>{rows}</tbody>;
+    const rows = props.characterData.map((row, index) => {
+            return (
+                <tr key={index}>
+                    <td>{row.id}</td>
+                    <td>{row.name}</td>
+                    <td>{row.job}</td>
+                    <td>
+                        <button onClick={() => props.removeCharacter(index)}>
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            );
+        }
+    );
+    return (
+        <tbody>
+        {rows}
+        </tbody>
+    );
 }
-
 
 function Table(props) {
     return (
         <table>
-        <TableHeader/>
+            <TableHeader />
             <TableBody
                 characterData={props.characterData}
                 removeCharacter={props.removeCharacter}
@@ -42,4 +47,5 @@ function Table(props) {
         </table>
     );
 }
+
 export default Table;
