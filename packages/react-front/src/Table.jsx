@@ -13,26 +13,23 @@ function TableHeader(){
 }
 
 function TableBody(props) {
-    const rows = props.characterData.map((row, index) => {
-            return (
-                <tr key={index}>
-                    <td>{row.name}</td>
-                    <td>{row.job}</td>
-                    <td>
-                        <button onClick={() => props.removeCharacter(index)}>
-                            Delete
-                        </button>
-                    </td>
-                </tr>
-            );
-        }
-    );
-    return (
-        <tbody>
-        {rows}
-        </tbody>
-    );
+    const characterData = props.characterData || []; // Default to empty array
+    const rows = characterData.map((row, index) => {
+        return (
+            <tr key={index}>
+                <td>{row.name}</td>
+                <td>{row.job}</td>
+                <td>
+                    <button onClick={() => props.removeCharacter(index)}>
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        );
+    });
+    return <tbody>{rows}</tbody>;
 }
+
 
 function Table(props) {
     return (
