@@ -1,14 +1,12 @@
 import mongoose from "mongoose";
-import userModel from "./user";
+import userModel from "./user.js";
 
 mongoose.set("debug", true);
 
 mongoose
-  .connect("mongodb://localhost:27017/users", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .catch((error) => console.log(error));
+    .connect("mongodb://localhost:27017/users")
+    .catch((error) => console.log(error));
+
 
 function getUsers(name, job) {
   let promise;
@@ -24,6 +22,10 @@ function getUsers(name, job) {
 
 function findUserById(id) {
   return userModel.findById(id);
+}
+
+function deleteUserById(id) {
+  return userModel.findByIdAndDelete(id);
 }
 
 function addUser(user) {
@@ -44,6 +46,7 @@ export default {
   addUser,
   getUsers,
   findUserById,
+  deleteUserById,
   findUserByName,
   findUserByJob,
 };
